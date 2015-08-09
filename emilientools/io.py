@@ -2,6 +2,8 @@
 Class to import various kinds of corpus
 """
 
+import os as os
+
 class WosCorpus(object):
     """
     Import WOS corpus
@@ -63,13 +65,15 @@ class WosCorpus(object):
         except:
             tmp["journal"] = "NA"
         try:
-            tmp["keyworlds1"] = (" ".join([sub[i][3:] for i in range(self.rank("DE",sub),self.rank("ID",sub))])).lower().split(";")
+            tmp["keywords1"] = (" ".join([sub[i][3:] for i in range(self.rank("DE",sub),self.rank("ID",sub))])).lower().split(";")
+            tmp["keywords1"] = [u.strip() for u in tmp["keywords1"]]
         except:
-            tmp["keyworlds1"] = []
+            tmp["keywords1"] = []
         try:
-            tmp["keyworlds2"] = (" ".join([sub[i][3:] for i in range(self.rank("ID",sub),self.rank("AB",sub))])).lower().split(";")
+            tmp["keywords2"] = (" ".join([sub[i][3:] for i in range(self.rank("ID",sub),self.rank("AB",sub))])).lower().split(";")
+            tmp["keywords2"] = [u.strip() for u in tmp["keywords2"]]
         except:
-            tmp["keyworlds2"] = []
+            tmp["keywords2"] = []
         try:
             tmp["abstract"] = (" ".join([sub[i][3:] for i in range(self.rank("AB",sub),self.rank("C1",sub))])).lower()
         except:
@@ -113,7 +117,7 @@ class WosCorpus(object):
         """
         Delimit the begin and the end of each articles in a plain text WOS file
         """
-        starts = [i for i in range(0,len(data)) if data[i]=='PT J']
+        starts = [i for i in range(0,len(data)) if data[i][0:3]=='PT ']
         return [(starts[i],starts[i+1]) for i in range(0,len(starts)-1)]+[(starts[-1],len(data))]
     
     def create_index(self):
